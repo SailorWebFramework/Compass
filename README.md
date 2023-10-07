@@ -1,3 +1,3 @@
 # SailorCLI
 
-CLI for Sailor Web Framework Swift
+Command Line Interface for [Sailor](https://github.com/JoshSweaterGuy/Sailor)
