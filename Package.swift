@@ -10,6 +10,10 @@ let package = Package(
                 url: "https://github.com/apple/swift-argument-parser.git",
                 .upToNextMinor(from: "1.0.3")
             ),
+            .package(
+                url: "https://github.com/swiftwasm/carton.git",
+                .upToNextMinor(from: "0.19.0")
+            ),
         ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -18,6 +22,7 @@ let package = Package(
             name: "compass",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "Carton", package: "carton")
             ],
             path: "Sources"),
     ]
