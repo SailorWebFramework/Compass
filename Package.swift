@@ -8,11 +8,11 @@ let package = Package(
         dependencies: [
             .package(
                 url: "https://github.com/apple/swift-argument-parser.git",
-                .upToNextMinor(from: "1.0.3")
+                branch: "main"
             ),
             .package(
                 url: "https://github.com/swiftwasm/carton.git",
-                .upToNextMinor(from: "0.19.0")
+                branch: "main"
             ),
         ],
     targets: [
@@ -22,7 +22,7 @@ let package = Package(
             name: "compass",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "Carton", package: "carton")
+                .product(name: "CartonKit", package: "carton")
             ],
             path: "Sources"),
     ]
