@@ -1,11 +1,10 @@
 import ArgumentParser
+import CartonKit
 
 @main
 struct MyCommand: ParsableCommand {
-    @Option(name: .shortAndLong, help: "The name of the person to greet.")
-    var name: String
-
     func run() {
-        print("Hello, \(name)!")
+        print("Hello, World!")
+        CartonKit.openInSystemBrowser(url: "https://cbannon.com")
     }
 }
