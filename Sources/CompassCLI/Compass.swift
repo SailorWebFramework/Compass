@@ -1,8 +1,13 @@
+import ArgumentParser
+import CompassUtils
 
+public struct Compass: ParsableCommand {
 
-public struct Compass {
+    public static let configuration: CommandConfiguration = CommandConfiguration(
+        abstract: "CLI tool for Sailor -  a Swift Frontend Web Framework",
+        version: compassVersion,
+        subcommands: [Init.self]
+    )
+
     public init() {}
-    public func run() {
-        print("Compass is running")
-    }
 }

@@ -18,3 +18,7 @@ public func isDirectoryExists(atPath path: String) -> Bool {
     FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
     return isDirectory.boolValue
 }
+
+public func isAbsolutePath(_ path: String) -> Bool {
+    return path.hasPrefix("/")
+}
