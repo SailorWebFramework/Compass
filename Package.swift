@@ -18,6 +18,7 @@ let package = Package(
             url: "https://github.com/apple/swift-argument-parser.git",
             branch: "main"
         ),
+        .package(url: "https://github.com/pakLebah/ANSITerminal", branch: "master"),
 
     ],
     targets: [
@@ -38,7 +39,8 @@ let package = Package(
         .target(
             name: "CompassUtils",
             dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser")
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "ANSITerminal"
             ],
             path: "Sources/CompassUtils"),
     ]
