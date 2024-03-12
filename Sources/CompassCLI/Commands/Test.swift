@@ -15,7 +15,7 @@ import ANSITerminal
 struct Test: AsyncParsableCommand {
 
     static let configuration = CommandConfiguration(
-        abstract: "Used for testing"
+        abstract: "Specify name of an executable product to produce the bundle for. (Wrapper for carton bundle)"
     )
         
     func run() async throws {
