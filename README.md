@@ -3,7 +3,7 @@
 Command Line Interface for [Sailor](https://github.com/JoshSweaterGuy/Sailor)
 
 Install via brew:
-'''brew install SailorWebFramework/formulae/Compass'''
+`brew install SailorWebFramework/formulae/Compass`
 
 
 - Chris todo:
