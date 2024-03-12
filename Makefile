@@ -9,10 +9,10 @@ build:
 
 install: build
 	install -d "$(bindir)"
-	install ".build/release/localdic" "$(bindir)"
+	install ".build/release/Compass" "$(bindir)"
 
 uninstall:
-	$(RM) -rf "$(bindir)/localdic"
+	$(RM) -rf "$(bindir)/Compass"
 
 clean:
 	$(RM) -rf .build
