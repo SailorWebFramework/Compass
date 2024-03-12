@@ -12,9 +12,9 @@ install: build
 	install ".build/release/localdic" "$(bindir)"
 
 uninstall:
-	rm -rf "$(bindir)/localdic"
+	$(RM) -rf "$(bindir)/localdic"
 
 clean:
-	rm -rf .build
+	$(RM) -rf .build
 
 .PHONY: build install uninstall clean

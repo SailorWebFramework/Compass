@@ -8,23 +8,40 @@ let package = Package(
     platforms: [
         .macOS(.v13)
     ],
-        dependencies: [
-            .package(
-                url: "https://github.com/apple/swift-argument-parser.git",
-                branch: "main"
-            ),
-           .package(url: "https://github.com/swiftwasm/carton", branch: "main"),
+    products: [
+        .library(name: "CompassCLI", targets: ["CompassCLI"]),
+        .library(name: "CompassUtils", targets: ["CompassUtils"]),
+        .executable(name: "Compass", targets: ["Compass"])  
+    ],
+    dependencies: [
+        .package(
+            url: "https://github.com/apple/swift-argument-parser.git",
+            branch: "main"
+        ),
+        .package(url: "https://github.com/pakLebah/ANSITerminal", branch: "master"),
 
-        ],
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .executableTarget(
-            name: "compass",
+            name: "Compass",
+            dependencies: [
+                "CompassCLI",
+            ],
+            path: "Sources/Compass"),
+        .target(
+            name: "CompassCLI",
+            dependencies: [
+                "CompassUtils"
+            ],
+            path: "Sources/CompassCLI"),
+        .target(
+            name: "CompassUtils",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "CartonKit", package: "carton")
+                "ANSITerminal"
             ],
-            path: "Sources"),
+            path: "Sources/CompassUtils"),
     ]
 )
