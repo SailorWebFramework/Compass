@@ -3,7 +3,8 @@
 prefix ?= /usr/local
 bindir = $(prefix)/bin
 
-# Command building targets.
+BUILDDIR = $(REPODIR)/.build
+
 build:
 	swift build -c release --disable-sandbox
 

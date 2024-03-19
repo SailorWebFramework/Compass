@@ -34,7 +34,7 @@ struct Init: AsyncParsableCommand {
 
         /* Check if valid destination */
         let destinationPath = cwd + "/" + name
-        if isDirectoryExists(atPath: destinationPath) && isDirectoryEmpty(atPath: destinationPath) == false {
+        if directoryExists(atPath: destinationPath) && directoryEmpty(atPath: destinationPath) == false {
             print("Error: Destination directory '\(destinationPath)' already exists and is not empty.")
             return
         }

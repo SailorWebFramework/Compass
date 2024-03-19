@@ -11,8 +11,8 @@ public protocol WrapperCommand: AsyncParsableCommand {
 extension WrapperCommand {
   public mutating func run() async throws {
     let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-    process.arguments = ["carton", command] + args + (help ? ["--help"] : [])
+    // process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+    process.arguments = ["swift run carton", command] + args + (help ? ["--help"] : [])
     try process.run()
     process.waitUntilExit()
   }
