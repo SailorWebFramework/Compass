@@ -14,11 +14,9 @@ let package = Package(
         .executable(name: "Compass", targets: ["Compass"])  
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-argument-parser.git",
-            branch: "main"
-        ),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", branch: "main"),
         .package(url: "https://github.com/pakLebah/ANSITerminal", branch: "master"),
+        .package(url: "https://github.com/eonist/FileWatcher.git", branch: "master")
 
     ],
     targets: [
@@ -40,7 +38,8 @@ let package = Package(
             name: "CompassUtils",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                "ANSITerminal"
+                "ANSITerminal",
+                "FileWatcher"
             ],
             path: "Sources/CompassUtils"),
     ]

@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "filewatcher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eonist/FileWatcher.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "ab3f80beac421dc5690c73e5c7c82c80e8c32a42"
+      }
+    },
+    {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser.git",

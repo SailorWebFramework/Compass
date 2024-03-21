@@ -52,7 +52,7 @@ struct Init: AsyncParsableCommand {
         do {        
             print("\nInitializing...\n")
             try await cloneRepositoryAsync(url: url, destinationPath: destinationPath)
-            try await removeGitDirectoryAsync(atPath: destinationPath)
+            try removeGitDirectory(atPath: destinationPath)
         } catch {
             print("Error: \(error)")
         }

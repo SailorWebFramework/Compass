@@ -6,9 +6,4 @@ Install via brew:
 `brew install SailorWebFramework/formulae/Compass`
 
 
-- Chris todo:
-
-- [ ] Verify we are in valid sailor project
-- [ ] Verify we have a crates/ directory
-- [ ] Verify/create .dev/ directory
-- [ ] Handle logic for future crates
+https://github.com/Lax/Learn-iOS-Swift-by-Examples/blob/master/Lister/ListerKit/DirectoryMonitor.swift

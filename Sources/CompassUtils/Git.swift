@@ -14,7 +14,7 @@ public func cloneRepositoryAsync(url: String, destinationPath: String) async thr
     process.waitUntilExit()
 }
 
-public func removeGitDirectoryAsync(atPath path: String) async throws {
+public func removeGitDirectory(atPath path: String) throws {
     let gitDirectoryPath = URL(fileURLWithPath: path).appendingPathComponent(".git")
     let fileManager = FileManager.default
     try fileManager.removeItem(at: gitDirectoryPath)
