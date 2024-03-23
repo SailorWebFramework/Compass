@@ -94,32 +94,33 @@ public func picker(title: String, options: [String]) -> String {
         if keyPressed() {
 
             let char = readChar()
-            if char == NonPrintableChar.enter.char() {
-                break
-            }
+            if char == NonPrintableChar.enter.char() { break }
 
             let key = readKey()
+
             if key.code == .up {
+
                 if state.activeLine > state.rangeOfLines.minimum {
                     state.activeLine -= 1
                     reRender(state: state)
                 }
+
             } else if key.code == .down {
+
                 if state.activeLine < state.rangeOfLines.maximum {
                     state.activeLine += 1
                     reRender(state: state)
                 }
+
             }
         }
     }
 
     let startLine = currentLine - 1
     writeAt(startLine, 0, "✔".green)
-
+    
     (startLine + 1...bottomLine).forEach { writeAt($0, 0, "│".foreColor(252)) }
-
     moveTo(bottomLine, 0)
-
 
     return state.options.first(where: { $0.line == state.activeLine })!.title
 }

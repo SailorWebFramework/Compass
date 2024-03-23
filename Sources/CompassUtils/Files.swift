@@ -17,7 +17,11 @@ public func isAbsolutePath(_ path: String) -> Bool {
     return path.hasPrefix("/")
 }
 
-public func directoryExists(atPath path: String) -> Bool {
+public func fileExists(atPath path: String) -> Bool {
+    return FileManager.default.fileExists(atPath: path)
+}
+
+public func isDirectory(atPath path: String) -> Bool {
     var isDirectory: ObjCBool = false
     FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
     return isDirectory.boolValue
@@ -25,5 +29,5 @@ public func directoryExists(atPath path: String) -> Bool {
 
 public func validCratesDirectory() -> Bool {
     let path = getCurrentWorkingDirectory()
-    return directoryExists(atPath: path + "/Crates")
+    return isDirectory(atPath: path + "/Crates")
 }
