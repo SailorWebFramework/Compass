@@ -79,15 +79,11 @@ public class ResourceWatcher {
 
     /// Adds a resource to the Package.swift file
     func addResource(path: String) {
-        try? self.readPackageFile() /// Read for fresh content
-        guard let range = packageContent.range(of: resourceLower) else { 
-            print("range?")
-            return 
-            }
-        print("adding", path)
+        try? self.readPackageFile()
+        guard let range = packageContent.range(of: resourceLower) else { return }
+
         let whitespace = leadingWhitespace(content: packageContent, range: range)
 
-        // Construct the new content with proper indentation
         let newContent = packageContent.replacingOccurrences(of: resourceLower, with: """
         \(resourceLower)
         \(whitespace).process("\(path)")
@@ -104,14 +100,12 @@ public class ResourceWatcher {
     /// Removes a resource from the Package.swift file
     func removeResource(path: String) {
         try? self.readPackageFile() /// Read for fresh content
-       guard let range = packageContent.range(of: resourceLower) else { return }
+        guard let range = self.packageContent.range(of: resourceLower) else { return }
 
         let whitespace = leadingWhitespace(content: packageContent, range: range)
-
-        let newContent = packageContent.replacingOccurrences(of: """
+        let newContent = self.packageContent.replacingOccurrences(of: """
         \(whitespace).process("\(path)")\n
         """, with: "")
-        // let newContent = packageContent.replacingOccurrences(of: ".process(\"\(path)\")\n", with: "")
         
         do {
             try newContent.write(toFile: self.swiftPackagePath, atomically: true, encoding: .utf8)
@@ -146,8 +140,30 @@ public class ResourceWatcher {
 
     /// Removes all resources in a directory from the Package.swift file
     func removeResources(path: String) {
-        print("removing", path)
         try? self.readPackageFile()
+
+        guard let start: String.Index = self.packageContent.range(of: resourceLower)?.upperBound else { return }
+        guard let end: String.Index = self.packageContent.range(of: resourceUpper)?.lowerBound else { return }
+
+        let range = start..<end
+        let content = self.packageContent[range]
+        let regex = try! NSRegularExpression(pattern: "\\.process\\(\"(.*?)\"\\)")
+        for line in content.split(separator: "\n") {
+            guard line.contains(path) else { continue }
+
+            if let match = regex.firstMatch(in: String(line), range: NSRange(line.startIndex..., in: line)) {
+                // Extract the range of the content within .process() call
+                let range = Range(match.range(at: 1), in: line)!
+                
+                // Extract the content within .process() call
+                let contentWithinProcessCall = line[range]
+                
+                print(contentWithinProcessCall)
+                self.removeResource(path: String(contentWithinProcessCall))
+            } else {
+                print("No match found.")
+            }
+        }
     }
 
     /// Regenerates resources... should be used every init?
