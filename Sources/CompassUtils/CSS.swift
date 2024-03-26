@@ -14,6 +14,7 @@ public class ResourceWatcher {
     let resourceUpper: String = "//⛵End (DONT REMOVE THIS COMMENT)"
 
     public init(file: String = "Sources/Resources") throws {
+        guard isDirectory(atPath: String(self.cwd + "/\(file)")) else { throw CompassError.invalidDirectory }
         self.basePath = self.cwd + "/\(file)"
 
         self.watcher = FileWatcher([self.cwd + "/\(file)"])
@@ -130,7 +131,8 @@ public class ResourceWatcher {
     func addResources(path: String) {
         let files = try? FileManager().contentsOfDirectory(atPath: self.basePath + path)
         files?.forEach { file in
-            if isDirectory(atPath: String(file)) {
+            if isDirectory(atPath: self.basePath + path + "/\(String(file))") {
+                print("found directory", file)
                 self.addResources(path: path + "/" + file)
             } else {
                 self.addResource(path: path + "/" + file)

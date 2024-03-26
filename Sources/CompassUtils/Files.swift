@@ -22,9 +22,9 @@ public func fileExists(atPath path: String) -> Bool {
 }
 
 public func isDirectory(atPath path: String) -> Bool {
-    var isDirectory: ObjCBool = false
-    FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
-    return isDirectory.boolValue
+    var isDir: ObjCBool = false
+    FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
+    return isDir.boolValue
 }
 
 public func validCratesDirectory() -> Bool {
