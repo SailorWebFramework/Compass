@@ -39,7 +39,7 @@ public class CSSWatcher: ResourceWatcher {
             guard let self = self else { return }
 
             if event.fileModified { return } /// Don't need to track this
-            let path = event.path.replacingOccurrences(of: self.basePath, with: "") /// Clean path
+            let path = event.path.replacingOccurrences(of: self.basePath, with: "Resources/") /// Clean path... TODO: better way to add resources?
 
             if event.fileRenamed {
 
