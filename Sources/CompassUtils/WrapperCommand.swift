@@ -11,8 +11,12 @@ public protocol WrapperCommand: AsyncParsableCommand {
 extension WrapperCommand {
   public mutating func run() async throws {
     let process = Process()
-    // process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-    process.arguments = ["swift run carton", command] + args + (help ? ["--help"] : [])
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+    process.arguments = ["swift", "run", "carton", command] + args + (help ? ["--help"] : [])
+    /// TODO: or...
+    // process.executableURL = URL(fileURLWithPath: "/usr/bin/swift")
+    // process.arguments = ["run", "carton", command] + args + (help ? ["--help"] : [])
+    /// TODO: some commands run twice when invoked with --help? (e.g. `compass test --help`)
     try process.run()
     process.waitUntilExit()
   }
