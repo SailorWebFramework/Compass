@@ -10,9 +10,11 @@ public protocol WrapperCommand: AsyncParsableCommand {
 
 extension WrapperCommand {
   public mutating func run() async throws {
+    // print("Running \(command) with args: \(args)")
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
     process.arguments = ["swift", "run", "carton", command] + args + (help ? ["--help"] : [])
+    print("Running \(process.executableURL!.path) with \(process.arguments!.joined(separator: " "))")
     /// TODO: or...
     // process.executableURL = URL(fileURLWithPath: "/usr/bin/swift")
     // process.arguments = ["run", "carton", command] + args + (help ? ["--help"] : [])

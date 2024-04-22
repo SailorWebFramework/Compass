@@ -39,15 +39,6 @@ struct Init: AsyncParsableCommand {
             return
         }
 
-        /* Ask user if they want to use tailwind */
-        if !tailwind {
-            let choice = picker(title: "Use tailwindcss?", options: ["Yes", "No"])
-            if choice == "Yes" {
-                tailwind = true
-            }
-        }
-        clearLine()
-
         /* Clone starter Code */
         do {        
             print("\nInitializing...\n")

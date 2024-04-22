@@ -1,27 +1,4 @@
 import Foundation
-import FileWatcher
-
-public class ResourceWatcher {
-    let watcher: FileWatcher
-    let basePath: String
-    let cwd: String = getCurrentWorkingDirectory()
-
-    public init(file: String, title: String) throws {
-        guard isDirectory(atPath: String(self.cwd + "/\(file)")) else { throw CompassError.invalidDirectory }
-        self.basePath = self.cwd + "/\(file)"
-
-        self.watcher = FileWatcher([self.cwd + "/\(file)"])
-        self.watcher.queue = DispatchQueue(label: "\(title)")
-    }
-
-    public func start() {
-        watcher.start()
-    }
-    public func stop() {
-        watcher.stop()
-    }
-}
-
 
 public class CSSWatcher: ResourceWatcher {
 
@@ -142,7 +119,7 @@ public class CSSWatcher: ResourceWatcher {
         let _ = writePackageFile(content: newContent)
     }
 
-    // /// Removes a resource from the Package.swift file
+    /// Removes a resource from the Package.swift file
     func removeResource(path: String) {
         guard let packageContent: String = try? self.readPackageFile() else { return }
         guard let range = packageContent.range(of: resourceLower) else { return }

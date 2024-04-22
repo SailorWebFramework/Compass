@@ -1,4 +1,5 @@
 import Foundation
+import FileWatcher
 
 public func getCurrentWorkingDirectory() -> String {
     return FileManager.default.currentDirectoryPath
@@ -27,7 +28,49 @@ public func isDirectory(atPath path: String) -> Bool {
     return isDir.boolValue
 }
 
-public func validCratesDirectory() -> Bool {
-    let path = getCurrentWorkingDirectory()
-    return isDirectory(atPath: path + "/Crates")
+public class ResourceWatcher {
+    let watcher: FileWatcher
+    let basePath: String
+    let cwd: String = getCurrentWorkingDirectory()
+
+    public init(file: String, title: String) throws {
+        guard isDirectory(atPath: String(self.cwd + "/\(file)")) else { throw CompassError.invalidDirectory }
+        self.basePath = self.cwd + "/\(file)"
+
+        self.watcher = FileWatcher([self.cwd + "/\(file)"])
+        self.watcher.queue = DispatchQueue(label: "\(title)")
+    }
+
+    public func start() {
+        watcher.start()
+    }
+    public func stop() {
+        watcher.stop()
+    }
 }
+
+// public class TestWatcherOne: ResourceWatcher {
+
+//     override public init(file: String, title: String) throws {
+//         try super.init(file: file, title: title)
+
+//         self.watcher.callback = { [weak self] event in
+//             guard let self = self else { return }
+            
+//             print("\u{001B}[0;32m\(event.description)\u{001B}[0m") // Change to green color for example
+//         }
+//     }
+// }
+
+// public class TestWatcherTwo: ResourceWatcher {
+
+//     override public init(file: String, title: String) throws {
+//         try super.init(file: file, title: title)
+
+//         self.watcher.callback = { [weak self] event in
+//             guard let self = self else { return }
+            
+//             print("\u{001B}[0;34m\(event.description)\u{001B}[0m") // Change to green color for example
+//         }
+//     }
+// }

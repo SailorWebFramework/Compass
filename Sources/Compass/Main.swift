@@ -12,7 +12,6 @@ struct Main {
   public static func main() async {
     do {
       var command: any ParsableCommand = try Command.parseAsRoot()
-      print(command)
       if var command = command as? AsyncParsableCommand {
         try await command.run()
       } else {
