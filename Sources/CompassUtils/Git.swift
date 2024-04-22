@@ -20,6 +20,7 @@ public func removeGitDirectory(atPath path: String) throws {
     try fileManager.removeItem(at: gitDirectoryPath)
 }
 
+/** Fetches a raw file from github and saves it to a file */
 public func getRaw(url: String, to: String) async throws {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
@@ -27,10 +28,10 @@ public func getRaw(url: String, to: String) async throws {
 
     /* Todo: figure better way to redirect output? */
     let devNullURL = URL(fileURLWithPath: "/dev/null")
-    // process.standardOutput = try FileHandle(forWritingTo: devNullURL)
-    // process.standardError = try FileHandle(forWritingTo: devNullURL)
+    process.standardOutput = try FileHandle(forWritingTo: devNullURL)
+    process.standardError = try FileHandle(forWritingTo: devNullURL)
 
-    print("Downloading \(url) to \(to)")
+    // print("Downloading \(url) to \(to)")
     
     try process.run()
     process.waitUntilExit()

@@ -3,8 +3,6 @@ import CompassUtils
 import Foundation
 import ArgumentParser
 
-// var wrapperCommands: [String] = ["bundle", "dev", "test"]
-
 @main
 struct Main {
   typealias Command = Compass

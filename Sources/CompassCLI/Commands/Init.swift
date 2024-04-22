@@ -13,7 +13,7 @@ struct Init: AsyncParsableCommand {
     )
 
     @Argument var name = ""
-    @Flag(help: "Enable tailwind in Sailor project") var tailwind: Bool = false
+    // @Flag(help: "Enable tailwind in Sailor project") var tailwind: Bool = false
     
     mutating func run() async throws {
 

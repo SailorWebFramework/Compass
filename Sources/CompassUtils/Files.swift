@@ -18,6 +18,14 @@ public func isAbsolutePath(_ path: String) -> Bool {
     return path.hasPrefix("/")
 }
 
+public func removeFile(atPath path: String) throws {
+    try FileManager.default.removeItem(atPath: path)
+}
+
+public func removeFolder(atPath path: String) throws {
+    try FileManager.default.removeItem(atPath: path)
+}
+
 public func fileExists(atPath path: String) -> Bool {
     return FileManager.default.fileExists(atPath: path)
 }
@@ -26,6 +34,10 @@ public func isDirectory(atPath path: String) -> Bool {
     var isDir: ObjCBool = false
     FileManager.default.fileExists(atPath: path, isDirectory: &isDir)
     return isDir.boolValue
+}
+
+public func createDirectory(atPath path: String) throws {
+    try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
 }
 
 public class ResourceWatcher {
