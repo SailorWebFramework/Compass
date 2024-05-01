@@ -2,12 +2,12 @@ import Foundation
 
 public class CSSWatcher: ResourceWatcher {
 
-    let swiftPackagePath: String = getCurrentWorkingDirectory() + "/test.swift"
+    let swiftPackagePath: String = getCurrentWorkingDirectory() + "/Package.swift"
 
     let resourceLower: String = "//⛵Sailor Generated Resources (DONT REMOVE THIS COMMENT)"
     let resourceUpper: String = "//⛵End (DONT REMOVE THIS COMMENT)"
 
-    override public init(file: String = "Sources/Resources", title: String = "compass.csswatcher") throws {
+    override public init(file: String = "Sources/Resources/", title: String = "compass.csswatcher") throws {
         try super.init(file: file, title: title)
 
         // self.regenerate(path: String(file))
@@ -17,6 +17,13 @@ public class CSSWatcher: ResourceWatcher {
 
             if event.fileModified { return } /// Don't need to track this
             let path = event.path.replacingOccurrences(of: self.basePath, with: "Resources/") /// Clean path... TODO: better way to add resources?
+            // print("Event: \(event) Path: \(path)")
+
+            print("Event fileCreated: \(event.fileCreated)")
+            print("Event fileRenamed: \(event.fileRenamed)")
+
+            print("Event dirCreated: \(event.dirCreated)")
+            print("Event dirRenamed: \(event.dirRenamed)")
 
             if event.fileRenamed {
 
@@ -38,13 +45,15 @@ public class CSSWatcher: ResourceWatcher {
 
                 /// Same reasoning as event.fileRenamed
                 if !FileManager().fileExists(atPath: event.path) {
+                    print("removing")
                     self.removeResources(path: path)
                 } else {
-                    self.addResources(path: path)
+                    print("adding")
+                    self.addResources(path: event.path)
                 }
 
             } else if event.dirCreated {
-                self.addResources(path: path)
+                self.addResources(path: event.path)
             }
             ///TODO: consider other events? Pretty confident these are the only ones needed... event.fileDeleted? IDK what dirModified is
             ///TODO: Better path matching algo for directory logic
@@ -88,6 +97,7 @@ public class CSSWatcher: ResourceWatcher {
 
     /// Removes trailing comma from the last resource
     func removeTrailingComma() {
+        print("Removing trailing comma")
         guard let packageContent: String = try? self.readPackageFile() else { return }
 
         guard let start: String.Index = packageContent.range(of: resourceLower)?.upperBound else { return }
@@ -106,10 +116,15 @@ public class CSSWatcher: ResourceWatcher {
 
     /// Adds a resource to the Package.swift file
     func addResource(path: String) {
+        print("Adding resource: \(path)")
         guard let packageContent: String = try? self.readPackageFile() else { return }
         guard let range = packageContent.range(of: resourceLower) else { return }
 
         let whitespace = leadingWhitespace(content: packageContent, range: range)
+
+        /* TODO: I dont like this check, but it works because in carton dev, this command is invoked twice */
+        if packageContent.contains("\(whitespace).process(\"\(path)\"),") { return }
+        if packageContent.contains("\(whitespace).process(\"\(path)\")") { return }
 
         let newContent = packageContent.replacingOccurrences(of: resourceLower, with: """
         \(resourceLower)
@@ -121,6 +136,7 @@ public class CSSWatcher: ResourceWatcher {
 
     /// Removes a resource from the Package.swift file
     func removeResource(path: String) {
+        print("Removing resource: \(path)")
         guard let packageContent: String = try? self.readPackageFile() else { return }
         guard let range = packageContent.range(of: resourceLower) else { return }
 
@@ -140,9 +156,10 @@ public class CSSWatcher: ResourceWatcher {
 
     /// Adds all resources in a directory to the Package.swift file
     func addResources(path: String) {
-        let files = try? FileManager().contentsOfDirectory(atPath: self.basePath + path)
+        print("Adding resources: \(path)")
+        let files = try? FileManager().contentsOfDirectory(atPath: path)
         files?.forEach { file in
-            if isDirectory(atPath: self.basePath + path + "/\(String(file))") {
+            if isDirectory(atPath: path + "/\(String(file))") {
                 self.addResources(path: path + "/" + file)
             } else {
                 self.addResource(path: path + "/" + file)
@@ -152,6 +169,7 @@ public class CSSWatcher: ResourceWatcher {
 
     /// Removes all resources in a directory from the Package.swift file
     func removeResources(path: String) {
+        print("Removing resources: \(path)")
         guard let packageContent: String = try? self.readPackageFile() else { return }
 
         guard let start: String.Index = packageContent.range(of: resourceLower)?.upperBound else { return }
@@ -161,20 +179,34 @@ public class CSSWatcher: ResourceWatcher {
         var content = "\n"
         var match = false
         let lines = packageContent[range].split(separator: "\n")
-        
-        for line in lines {
-            if line.contains(path) { continue }
-            content += "\(line),\n"
-            match = true
-        }
-        
-        if !match { print("No content removed..."); return }
 
-        var newPackageContent = packageContent
-        newPackageContent.replaceSubrange(range, with: content)
-        print(newPackageContent)
-        let _ = self.writePackageFile(content: newPackageContent)
-    }
+
+        // guard let pattern = try? Regex(#"^\s*\.process\("([^"]+)"\)"#) else { print("Error: Invalid regex pattern"); return}
+        guard let pattern = try? Regex("\"(.*?)\"") else { print("Error: Invalid regex pattern"); return}
+        if let m = ".process(\"balls\")".firstMatch(of: pattern) {
+            print("Test match: \(m[0])")
+        }
+           
+        for line in lines {
+            print("Line: \(line)")
+            if !line.contains(path) { continue }
+
+            print("Matched: \(line)")
+            let line_copy = Substring(line)
+            // let match = line_copy.firstMatch(of: pattern)
+           
+            if let match = line_copy.firstMatch(of: pattern) {
+                // let match = try pattern.firstMatch(in: line, options: [], range: range)
+                print("Match: \(match[0])")
+            }
+                // if let range = match {
+                //     let textInsideParentheses = line[range].dropFirst().dropLast()
+                //     print("Text inside parentheses: \(textInsideParentheses)")
+                //     // Insert your code here to process the text inside parentheses
+                // }
+            }
+            return
+        }
 
     /// TODO: use every init?
     func regenerate(path: String) {

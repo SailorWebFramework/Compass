@@ -49,6 +49,8 @@ public class ResourceWatcher {
         guard isDirectory(atPath: String(self.cwd + "/\(file)")) else { throw CompassError.invalidDirectory }
         self.basePath = self.cwd + "/\(file)"
 
+        print("Setting up watcher for \(self.basePath)")
+
         self.watcher = FileWatcher([self.cwd + "/\(file)"])
         self.watcher.queue = DispatchQueue(label: "\(title)")
     }
@@ -60,29 +62,3 @@ public class ResourceWatcher {
         watcher.stop()
     }
 }
-
-// public class TestWatcherOne: ResourceWatcher {
-
-//     override public init(file: String, title: String) throws {
-//         try super.init(file: file, title: title)
-
-//         self.watcher.callback = { [weak self] event in
-//             guard let self = self else { return }
-            
-//             print("\u{001B}[0;32m\(event.description)\u{001B}[0m") // Change to green color for example
-//         }
-//     }
-// }
-
-// public class TestWatcherTwo: ResourceWatcher {
-
-//     override public init(file: String, title: String) throws {
-//         try super.init(file: file, title: title)
-
-//         self.watcher.callback = { [weak self] event in
-//             guard let self = self else { return }
-            
-//             print("\u{001B}[0;34m\(event.description)\u{001B}[0m") // Change to green color for example
-//         }
-//     }
-// }
