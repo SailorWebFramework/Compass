@@ -1,5 +1,6 @@
 import Foundation
 import ArgumentParser
+import Dispatch
 
 public protocol WrapperCommand: AsyncParsableCommand {
   var command: String { get }
@@ -10,15 +11,23 @@ public protocol WrapperCommand: AsyncParsableCommand {
 
 extension WrapperCommand {
   public mutating func run() async throws {
-    // print("Running \(command) with args: \(args)")
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-    process.arguments = ["swift", "run", "carton", command] + args + (help ? ["--help"] : [])
-    print("Running \(process.executableURL!.path) with \(process.arguments!.joined(separator: " "))")
+    //TODO: passing args is conditional on whether or not the --help flag is included... is this right?
+    process.arguments = ["swift", "run", "carton", command] + (help ? ["--help"] : args)
+    print("I am a Running \(process.executableURL!.path) with \(process.arguments!.joined(separator: " "))")
     /// TODO: or...
     // process.executableURL = URL(fileURLWithPath: "/usr/bin/swift")
     // process.arguments = ["run", "carton", command] + args + (help ? ["--help"] : [])
-    /// TODO: some commands run twice when invoked with --help? (e.g. `compass test --help`)
+    let signalSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
+    signalSource.setEventHandler {
+        print("Cleaning up...")
+        process.interrupt()
+        signalSource.cancel()
+    }
+    signal(SIGINT, SIG_IGN)
+    signalSource.resume()
+
     try process.run()
     process.waitUntilExit()
   }

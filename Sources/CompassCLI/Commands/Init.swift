@@ -61,7 +61,6 @@ struct Init: AsyncParsableCommand {
         print("Done! Your project is ready at ./\(name)\n")
         let steps = [
             "cd \(name)",
-            "compass build",
             "compass dev",
         ]
         print("Next steps:\n".bold)
