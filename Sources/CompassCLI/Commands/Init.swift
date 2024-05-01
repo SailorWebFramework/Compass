@@ -4,7 +4,7 @@ import Foundation
 import ANSITerminal
 
 var cwd: String = getCurrentWorkingDirectory()
-var url: String = "https://github.com/SailorWebFramework/Base" 
+var url: String = "https://github.com/SailorWebFramework/ExampleProject" 
 
 struct Init: AsyncParsableCommand {
 
@@ -52,7 +52,7 @@ struct Init: AsyncParsableCommand {
         let packagePath = destinationPath + "/Package.swift"
         do {
             let packageContents = try String(contentsOfFile: packagePath, encoding: .utf8)
-            let newPackageContents = packageContents.replacingOccurrences(of: "YOURNAME", with: name)
+            let newPackageContents = packageContents.replacingOccurrences(of: "ExampleProject", with: name)
             try newPackageContents.write(toFile: packagePath, atomically: true, encoding: .utf8)
         } catch {
             print("Error: \(error)")
