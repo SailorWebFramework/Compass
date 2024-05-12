@@ -9,16 +9,31 @@ struct Development: AsyncParsableCommand {
     )
         
     func run() async throws {
-        // let csswatcher = try ResourceWatcher(file: "css", title: "css")
-        // // let w_one = try TestWatcherOne(file: "css", title: "blue")
-        // // let w_two = try TestWatcherTwo(file: "css", title: "green")
-        // // w_one.start()
-        // // w_two.start()
-        // csswatcher.start()
+       let s: String = """
+        .process("Resources/main.css"),
+        .process("Resources/favicon.ico")
+        balls
+        laskjflkasjd
+        lasdjflskjf
+        ("Resources/main.css"),
+        ("Resources/favicon.ico")
+       """
 
-        // while true {
-        //     sleep(1)
-        // }
-        try await getRaw(url: "https://raw.githubusercontent.com/SailorWebFramework/Compass/main/Sources/Compass/Main.swift", to: getCurrentWorkingDirectory() + "/Crates/test.swift")
+       /// create regex pattern to strip out the file paths
+        let pattern = #""(.*)""#
+        let regex = try NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+
+       /// iterate over this string by line
+       for line in s.split(separator: "\n") {
+              print("Line: \(line)")
+              let nsrange = NSRange(line.startIndex..<line.endIndex, in: line)
+              let matches = regex.matches(in: String(line), options: [], range: nsrange)
+              for match in matches {
+                let range = match.range(at: 1)
+                if let swiftRange = Range(range, in: line) {
+                     print("Match: \(line[swiftRange])")
+                }
+              }
+       }
     }
 }

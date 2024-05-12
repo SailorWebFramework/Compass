@@ -1,5 +1,7 @@
 import Foundation
 
+//TODO: improve consistency of absolute/relative paths
+
 public class CSSWatcher: ResourceWatcher {
 
     let swiftPackagePath: String = getCurrentWorkingDirectory() + "/Package.swift"
@@ -10,7 +12,7 @@ public class CSSWatcher: ResourceWatcher {
     override public init(file: String = "Sources/Resources/", title: String = "compass.csswatcher") throws {
         try super.init(file: file, title: title)
 
-        // self.regenerate(path: String(file))
+        self.regenerate(path: String(file))
 
         self.watcher.callback = { [weak self] event in
             guard let self = self else { return }
@@ -57,7 +59,7 @@ public class CSSWatcher: ResourceWatcher {
             }
             ///TODO: consider other events? Pretty confident these are the only ones needed... event.fileDeleted? IDK what dirModified is
             ///TODO: Better path matching algo for directory logic
-            self.removeTrailingComma()
+            if (event.fileRenamed || event.dirRenamed ) { self.removeTrailingComma() }
         }
     }
 
@@ -176,37 +178,35 @@ public class CSSWatcher: ResourceWatcher {
         guard let end: String.Index = packageContent.range(of: resourceUpper)?.lowerBound else { return }
 
         let range = start..<end
-        var content = "\n"
-        var match = false
         let lines = packageContent[range].split(separator: "\n")
+
+        var linesToRemove: [String] = []
 
 
         // guard let pattern = try? Regex(#"^\s*\.process\("([^"]+)"\)"#) else { print("Error: Invalid regex pattern"); return}
-        guard let pattern = try? Regex("\"(.*?)\"") else { print("Error: Invalid regex pattern"); return}
-        if let m = ".process(\"balls\")".firstMatch(of: pattern) {
-            print("Test match: \(m[0])")
-        }
+        let pattern = #""(.*)""#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return }
            
         for line in lines {
             print("Line: \(line)")
             if !line.contains(path) { continue }
 
-            print("Matched: \(line)")
-            let line_copy = Substring(line)
-            // let match = line_copy.firstMatch(of: pattern)
-           
-            if let match = line_copy.firstMatch(of: pattern) {
-                // let match = try pattern.firstMatch(in: line, options: [], range: range)
-                print("Match: \(match[0])")
+            print("THIS LINE HAS THING: \(line)")
+            //TODO: Regex utils file to clean this up
+            let nsrange = NSRange(line.startIndex..<line.endIndex, in: line)
+            let matches = regex.matches(in: String(line), options: [], range: nsrange)
+            for match in matches {
+                let range = match.range(at: 1)
+                if let swiftRange = Range(range, in: line) {
+                    linesToRemove.append(String(line[swiftRange]))
+                }
             }
-                // if let range = match {
-                //     let textInsideParentheses = line[range].dropFirst().dropLast()
-                //     print("Text inside parentheses: \(textInsideParentheses)")
-                //     // Insert your code here to process the text inside parentheses
-                // }
-            }
-            return
         }
+        for line in linesToRemove {
+            self.removeResource(path: line)
+        }
+        return
+    }
 
     /// TODO: use every init?
     func regenerate(path: String) {
