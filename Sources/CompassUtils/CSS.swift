@@ -8,24 +8,27 @@ public class CSSWatcher: ResourceWatcher {
 
     let resourceLower: String = "//⛵Sailor Generated Resources (DONT REMOVE THIS COMMENT)"
     let resourceUpper: String = "//⛵End (DONT REMOVE THIS COMMENT)"
+    let filePrefix: String = "Sources/"
 
-    override public init(file: String = "Sources/Resources/", title: String = "compass.csswatcher") throws {
-        try super.init(file: file, title: title)
+    override public init(file: String = "Resources/", title: String = "compass.csswatcher") throws {
+        try super.init(file: filePrefix + file, title: title)
 
-        self.regenerate(path: String(file))
+        self.regenerate(path: filePrefix + file, file: file)
 
         self.watcher.callback = { [weak self] event in
             guard let self = self else { return }
 
             if event.fileModified { return } /// Don't need to track this
-            let path = event.path.replacingOccurrences(of: self.basePath, with: "Resources/") /// Clean path... TODO: better way to add resources?
             // print("Event: \(event) Path: \(path)")
+            let path = event.path.replacingOccurrences(of: self.basePath, with: file) /// Clean path... TODO: better way to add resources?
 
             print("Event fileCreated: \(event.fileCreated)")
             print("Event fileRenamed: \(event.fileRenamed)")
 
             print("Event dirCreated: \(event.dirCreated)")
             print("Event dirRenamed: \(event.dirRenamed)")
+
+            print(event.path)
 
             if event.fileRenamed {
 
@@ -51,7 +54,7 @@ public class CSSWatcher: ResourceWatcher {
                     self.removeResources(path: path)
                 } else {
                     print("adding")
-                    self.addResources(path: event.path)
+                    self.addResources(path: path)
                 }
 
             } else if event.dirCreated {
@@ -99,20 +102,29 @@ public class CSSWatcher: ResourceWatcher {
 
     /// Removes trailing comma from the last resource
     func removeTrailingComma() {
-        print("Removing trailing comma")
+        // print("Removing trailing comma")
         guard let packageContent: String = try? self.readPackageFile() else { return }
 
         guard let start: String.Index = packageContent.range(of: resourceLower)?.upperBound else { return }
         guard let end: String.Index = packageContent.range(of: resourceUpper)?.lowerBound else { return }
         let range = start..<end
         let content = packageContent[range]
+        // print("CONTENT: ", content)
 
-        let lines = content.split(separator: "\n")
+        let lines = content.split(separator: ",\n")
+        // print("LINES: ", lines)
         if lines.count == 0 { return }
-        let lastLine = content[lines.last!.startIndex...]
+        // count -2 because last element is empty
+        let lastLine = content[lines[lines.count - 2].startIndex...]
+        print("LAST LINE:", lastLine)
         if lastLine.hasSuffix(",\n") {
-            let newContent = packageContent.replacingOccurrences(of: ",\n", with: "\n", options: .backwards)
-            let _ = self.writePackageFile(content: newContent)
+           print("Removing trailing comma")
+           let newContent = packageContent.replacingOccurrences(of: """
+              \(lastLine)
+              """, with: """
+                \(lastLine.dropLast(2))\n
+                """)
+              let _ = writePackageFile(content: newContent)
         }
     }
 
@@ -159,7 +171,8 @@ public class CSSWatcher: ResourceWatcher {
     /// Adds all resources in a directory to the Package.swift file
     func addResources(path: String) {
         print("Adding resources: \(path)")
-        let files = try? FileManager().contentsOfDirectory(atPath: path)
+        let filePath = getCurrentWorkingDirectory() + "/" + path
+        let files = try? FileManager().contentsOfDirectory(atPath: filePath)
         files?.forEach { file in
             if isDirectory(atPath: path + "/\(String(file))") {
                 self.addResources(path: path + "/" + file)
@@ -181,7 +194,6 @@ public class CSSWatcher: ResourceWatcher {
         let lines = packageContent[range].split(separator: "\n")
 
         var linesToRemove: [String] = []
-
 
         // guard let pattern = try? Regex(#"^\s*\.process\("([^"]+)"\)"#) else { print("Error: Invalid regex pattern"); return}
         let pattern = #""(.*)""#
@@ -209,8 +221,9 @@ public class CSSWatcher: ResourceWatcher {
     }
 
     /// TODO: use every init?
-    func regenerate(path: String) {
-        self.removeResources(path: path)
-        self.addResources(path: path)
+    func regenerate(path: String, file: String) {
+        self.removeResources(path: path.replacingOccurrences(of: path, with: file))
+        self.addResources(path: String(path.dropLast(1).replacingOccurrences(of: filePrefix, with: "")))
+        self.removeTrailingComma()
     }
 }
